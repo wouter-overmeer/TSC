@@ -1,0 +1,124 @@
+using System;
+using Excel = Microsoft.Office.Interop.Excel;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Runtime.InteropServices;
+using System.Text;
+using System.Threading.Tasks;
+using Microsoft.Office.Interop.Excel;
+
+public class ExcelHandler
+{
+    private Excel.Application TragetExcelApp = null;
+    private Excel.Application SourceExcelApp = null;
+
+    public ExcelHandler()
+	{
+        SourceExcelApp = new Excel.Application();
+
+        Excel.Workbook xlReferenceWorkbook = SourceExcelApp.Workbooks.Open(@"C:\Users\wouter.overmeer\OneDrive - Avanade\Visual Studio Solutions\Timesheet Converter\Files\Timesheet - reference.xlsx");
+        Excel._Worksheet xlInstructionSheet = SourceExcelApp.Sheets[1];
+        Excel._Worksheet xlSourceSheet = SourceExcelApp.Sheets[2];
+        Excel._Worksheet xlReferenceSheet = SourceExcelApp.Sheets[3];
+        //xlHourSheet.UsedRange.Copy(Type.Missing);
+
+
+        //Excel._Worksheet xlValueSheet = XlApp2.Sheets[3];
+
+
+        TragetExcelApp = new Excel.Application();
+        Excel.Workbook xlTargetWorkbook = SourceExcelApp.Workbooks.Open(@"C:\Users\wouter.overmeer\OneDrive - Avanade\Visual Studio Solutions\Timesheet Converter\Files\Urenstaten FY19 - Wouter Overmeer.xlsx");
+        //Excel._Worksheet xlWorksheet = TragetExcelApp.Sheets[1];
+
+        //Object defaultArg = Type.Missing;
+        //var newWorksheet = (Worksheet)TragetExcelApp.Sheets.Add(defaultArg, defaultArg, defaultArg, defaultArg);
+        xlInstructionSheet.Copy(xlTargetWorkbook.Worksheets[1]);
+        xlSourceSheet.Copy(xlTargetWorkbook.Worksheets[1]);
+        xlReferenceSheet.Copy(xlTargetWorkbook.Worksheets[1]);
+
+        //((Excel._Worksheet)xlTargetWorkbook.Worksheets[3]).Visible = XlSheetVisibility.xlSheetHidden;
+
+        xlTargetWorkbook.Save();
+
+        //SourceExcelApp.Sheets[2].Copy(xlTargetWorkbook.Worksheets[2]);
+        //SourceExcelApp.Sheets[3].Copy(xlTargetWorkbook.Worksheets[3]);
+
+
+
+        //xlHourSheet.UsedRange.Copy();
+        //Excel.Range range = (Excel.Range)newWorksheet.Cells[1, 1];
+        ////range.PasteSpecial(XlPasteType.xlPasteValues, XlPasteSpecialOperation.xlPasteSpecialOperationNone, false, false);
+        //range.PasteSpecial(XlPasteType.xlPasteValues, XlPasteSpecialOperation.xlPasteSpecialOperationNone);
+        //range.PasteSpecial(XlPasteType.xlPasteFormulasAndNumberFormats, XlPasteSpecialOperation.xlPasteSpecialOperationNone);
+        //range.PasteSpecial(XlPasteType.xlPasteColumnWidths, XlPasteSpecialOperation.xlPasteSpecialOperationNone);
+        //range.PasteSpecial(XlPasteType.xlPasteAll);
+
+        //if (false)
+        //{
+        //    Excel.Range xlRange = xlWorksheet.UsedRange;
+
+        //    int rowCount = xlRange.Rows.Count;
+        //    int colCount = xlRange.Columns.Count;
+
+        //    int count = xlTargetWorkbook.Worksheets.Count;
+        //    Excel.Worksheet timeSheet = TragetExcelApp.Sheets[2];
+
+        //    // sheet has headers
+        //    var lastIndex = 2;
+
+        //    for (int j = 5; j <= colCount; j++)
+        //    {
+        //        var date = DateTime.MinValue;
+
+        //        for (int i = 2; i <= rowCount; i++)
+        //        {
+        //            if (xlRange.Cells[i, j] != null && xlRange.Cells[i, j].Value != null && xlRange.Cells[i, j].Value.ToString() != string.Empty)
+        //            {
+        //                if (i == 2)
+        //                {
+        //                    date = DateTime.Parse(xlRange.Cells[i, j].Value.ToString());
+        //                }
+        //                else
+        //                {
+        //                    timeSheet.Cells[lastIndex, 4].Value = date;
+        //                    timeSheet.Cells[lastIndex, 5].Value = xlRange.Cells[i, 1].Value;
+        //                    timeSheet.Cells[lastIndex, 6].Value = xlRange.Cells[i, j].Value;
+        //                    timeSheet.Cells[lastIndex, 7].Value = xlRange.Cells[i, 4].Value;
+        //                    lastIndex++;
+        //                }
+        //            }
+        //        }
+        //    }
+        //}
+
+
+        //cleanup
+        GC.Collect();
+        GC.WaitForPendingFinalizers();
+
+        //rule of thumb for releasing com objects:
+        //  never use two dots, all COM objects must be referenced and released individually
+        //  ex: [somthing].[something].[something] is bad
+
+        //release com objects to fully kill excel process from running in the background
+        Marshal.ReleaseComObject(xlSourceSheet);
+
+        //Marshal.ReleaseComObject(xlWorksheet);
+        //Marshal.ReleaseComObject(newWorksheet);
+
+        //close and release
+        xlTargetWorkbook.Save();
+        xlTargetWorkbook.Close();
+       // Marshal.ReleaseComObject(xlWorksheet);
+
+        //quit and release
+        TragetExcelApp.Quit();
+        SourceExcelApp.Quit();
+        Marshal.ReleaseComObject(TragetExcelApp);
+        Marshal.ReleaseComObject(SourceExcelApp);
+    }
+
+    
+}
